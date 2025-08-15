@@ -295,6 +295,30 @@ function App() {
     }
   }
 
+  const formatMessageContent = (content) => {
+    if (!content) return ''
+
+    // Convert **text** to <strong>text</strong>
+    let formatted = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+
+    // Convert *text* to <em>text</em>
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>')
+
+    // Convert - text to bullet points
+    formatted = formatted.replace(/^- (.+)$/gm, '• $1')
+
+    // Convert newlines to <br> tags
+    formatted = formatted.replace(/\n/g, '<br>')
+
+    // Convert Coach steps section to styled format
+    formatted = formatted.replace(/Coach steps — pick one:/g, '<div class="font-semibold text-orange-400 mb-2">Coach steps — pick one:</div>')
+
+    // Convert each option to styled format
+    formatted = formatted.replace(/- (.+?) — type: "(.+?)"/g, '<div class="flex items-center space-x-2 mb-1"><span class="text-orange-400">•</span><span class="flex-1">$1</span><span class="text-xs bg-gray-600 px-2 py-1 rounded text-yellow-400">$2</span></div>')
+
+    return formatted
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="flex h-screen">
@@ -565,7 +589,10 @@ function App() {
                           : 'bg-gray-700 text-white border border-gray-600'
                         }`}
                     >
-                      <div className="text-sm">{message.content}</div>
+                      <div
+                        className="text-sm"
+                        dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }}
+                      />
 
                       {/* Message Footer with Timestamp and Tokens */}
                       <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-600/30">
